@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="title" content="Automatic 3D Cube - For Bestie | Ayush Dubey">
+  <meta name="github" content="https://github.com/theayushdube">
+  <title>3D Cube - For Bestie | Ayush Dubey</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      overflow: hidden;
+      height: 100%;
+      background: linear-gradient(45deg, 
+                    rgba(245, 69, 69, 0.8), 
+                    rgba(255, 39, 205, 0.8),
+                    rgba(131, 58, 180, 0.8),
+                    rgba(252, 176, 69, 0.8));
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Arial', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated background particles */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      animation: moveParticle 15s infinite linear;
+    }
+
+    @keyframes moveParticle {
+      0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 0.5;
+      }
+      100% {
+        transform: translateY(-20vh) translateX(20vw);
+        opacity: 0;
+      }
+    }
+
+    .title {
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4), 
+                   0px 8px 13px rgba(0, 0, 0, 0.1), 
+                   0px 18px 23px rgba(0, 0, 0, 0.1);
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: 8px;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+      position: relative;
+      animation: heartBeatText 2s infinite;
+    }
+
+    /* Glowing text effect */
+    .title:after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      color: transparent;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 
+                   0 0 25px rgba(255, 215, 0, 0.4);
+      animation: textGlow 5s infinite alternate;
+      z-index: -1;
+    }
+
+    @keyframes textGlow {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes heartBeatText {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .heartbeat {
+      display: inline-block;
+      animation: heartbeat 1.5s ease-in-out infinite;
+      margin: 0 5px;
+      font-size: 1.2em;
+      filter: drop-shadow(0 0 10px rgba(255, 0, 98, 0.8));
+    }
+
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      25% { transform: scale(1.3); }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    .cube-container {
+      perspective: 1200px;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+      position: relative;
+      filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
+    }
+
+    .glow-ring {
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.1) 30%,
+        rgba(255, 255, 255, 0) 70%
+      );
+      z-index: -1;
+      animation: pulseRing 4s infinite;
+    }
+
+    @keyframes pulseRing {
+      0%, 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+    }
+
+    .cube {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      transform-style: preserve-3d;
+      animation: autoRotate 18s infinite linear;
+      transition: transform 0.8s ease;
+    }
+
+    @keyframes autoRotate {
+      from { transform: rotateX(-15deg) rotateY(0deg); }
+      to { transform: rotateX(-15deg) rotateY(360deg); }
+    }
+
+    /* Improved hover animation */
+    @keyframes hoverRotate {
+      0% { transform: rotateX(-25deg) rotateY(0deg); }
+      25% { transform: rotateX(5deg) rotateY(90deg); }
+      50% { transform: rotateX(-25deg) rotateY(180deg); }
+      75% { transform: rotateX(5deg) rotateY(270deg); }
+      100% { transform: rotateX(-25deg) rotateY(360deg); }
+    }
+
+    .cube .outer-cube,
+    .cube .inner-cube {
+      transform-style: preserve-3d;
+    }
+
+    /* Outer cube faces */
+    .outer-cube .face {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 220px;
+      height: 220px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      overflow: hidden;
+      transition: all 0.8s ease;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      opacity: 0.9;
+    }
+
+    .outer-cube img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .outer-top {
+      transform: rotateX(90deg) translateZ(110px);
+    }
+
+    .outer-bottom {
+      transform: rotateX(-90deg) translateZ(110px);
+    }
+
+    .outer-front {
+      transform: rotateY(0deg) translateZ(110px);
+    }
+
+    .outer-back {
+      transform: translateZ(-110px) rotateY(180deg);
+    }
+
+    .outer-left {
+      transform: rotateY(90deg) translateZ(110px);
+    }
+
+    .outer-right {
+      transform: rotateY(-90deg) translateZ(110px);
+    }
+
+    /* Inner cube faces */
+    .inner-cube .face {
+      position: absolute;
+      top: 45px;
+      left: 45px;
+      width: 130px;
+      height: 130px;
+      overflow: hidden;
+      transition: all 0.8s ease;
+      box-shadow: 0 0 15px rgba(255, 165, 220, 0.7);
+    }
+
+    .inner-cube img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .inner-top {
+      transform: rotateX(90deg) translateZ(65px);
+    }
+
+    .inner-bottom {
+      transform: rotateX(-90deg) translateZ(65px);
+    }
+
+    .inner-front {
+      transform: rotateY(0deg) translateZ(65px);
+    }
+
+    .inner-back {
+      transform: translateZ(-65px) rotateY(180deg);
+    }
+
+    .inner-left {
+      transform: rotateY(90deg) translateZ(65px);
+    }
+
+    .inner-right {
+      transform: rotateY(-90deg) translateZ(65px);
+    }
+
+    /* Enhanced hover effects for cube - faces expand and glow */
+    .cube:hover .outer-top {
+      transform: rotateX(90deg) translateZ(150px);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 50px rgba(255, 0, 128, 0.5);
+      opacity: 1;
+    }
+
+    .cube:hover .outer-bottom {
+      transform: rotateX(-90deg) translateZ(150px);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 50px rgba(255, 0, 128, 0.5);
+      opacity: 1;
+    }
+
+    .cube:hover .outer-front {
+      transform: rotateY(0deg) translateZ(150px);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 50px rgba(255, 0, 128, 0.5);
+      opacity: 1;
+    }
+
+    .cube:hover .outer-back {
+      transform: translateZ(-150px) rotateY(180deg);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 50px rgba(255, 0, 128, 0.5);
+      opacity: 1;
+    }
+
+    .cube:hover .outer-left {
+      transform: rotateY(90deg) translateZ(150px);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 50px rgba(255, 0, 128, 0.5);
+      opacity: 1;
+    }
+
+    .cube:hover .outer-right {
+      transform: rotateY(-90deg) translateZ(150px);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 50px rgba(255, 0, 128, 0.5);
+      opacity: 1;
+    }
+
+    /* Enhanced hover effects for inner cube */
+    .cube:hover .inner-cube .face {
+      transform-origin: center;
+      transform: scale(0.9);
+      opacity: 0.8;
+    }
+
+    /* Enhanced image hover effects */
+    .outer-cube .face:hover img {
+      transform: scale(1.1);
+      filter: brightness(1.2) contrast(1.1);
+    }
+
+    .inner-cube .face:hover img {
+      transform: scale(1.1);
+      filter: brightness(1.2) contrast(1.1);
+    }
+
+    .message {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      bottom: 80px;
+    }
+
+    .tip {
+      display: inline-block;
+      color: white;
+      font-size: 1.2rem;
+      margin: 20px auto;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 25px;
+      border-radius: 30px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2),
+                  0 0 20px rgba(255, 255, 255, 0.3);
+      animation: fadeInOut 5s infinite;
+      animation-delay: 3s;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; transform: translateY(20px); }
+      15%, 85% { opacity: 1; transform: translateY(0); }
+    }
+
+    #copy {
+      position: fixed;
+      bottom: 15px;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+
+    #copy p {
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    #copy a {
+      text-decoration: none;
+      background-image: linear-gradient(to right, #ff6b6b, #ff8e53, #ffa631);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    #copy a:hover {
+      filter: brightness(1.2);
+      transform: scale(1.05);
+    }
+
+    /* Enhanced sparkle effects */
+    .sparkle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background-color: white;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 100;
+      filter: blur(0.5px);
+      animation: sparkleAnim 1.5s linear forwards;
+    }
+
+    @keyframes sparkleAnim {
+      0% { transform: scale(0) rotate(0deg); opacity: 0; }
+      20% { transform: scale(1.5) rotate(90deg); opacity: 1; }
+      50% { transform: scale(1) rotate(180deg); opacity: 1; }
+      100% { transform: scale(0) rotate(360deg); opacity: 0; }
+    }
+
+    /* Media queries for responsiveness */
+    @media (max-width: 768px) {
+      .title {
+        font-size: 1.8rem;
+        letter-spacing: 5px;
+      }
+      
+      .tip {
+        font-size: 1rem;
+        padding: 8px 15px;
+      }
+    }
+
+    /* Enhanced scrapbook-like effect to images */
+    .face {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .face:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .face:after {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      border: 2px dashed rgba(255, 255, 255, 0.5);
+      z-index: 2;
+      pointer-events: none;
+    }
+    
+    /* Floating hearts and stars effects */
+    .floating-element {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 10;
+      animation: floatUp 4s linear forwards;
+      filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+    }
+    
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+    
+    /* Rainbow trail effect behind cube */
+    .rainbow-trail {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      animation: fadeTrail 2s linear forwards;
+    }
+    
+    @keyframes fadeTrail {
+      0% { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(0.2); opacity: 0; }
+    }
+    
+    /* Confetti particles */
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 16px;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 5;
+      animation: confettiFall 4s linear forwards;
+    }
+    
+    @keyframes confettiFall {
+      0% { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    
+    /* Added ambient light effect */
+    .ambient-light {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(255, 192, 203, 0.2) 0%,
+        rgba(255, 165, 0, 0.1) 50%,
+        rgba(255, 255, 255, 0) 70%
+      );
+      filter: blur(20px);
+      z-index: -1;
+      animation: ambientPulse 10s infinite alternate;
+    }
+    
+    @keyframes ambientPulse {
+      0% { transform: scale(0.8); opacity: 0.4; }
+      100% { transform: scale(1.2); opacity: 0.7; }
+    }
+    
+    /* Special decorative elements */
+    .decoration {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .decoration::before,
+    .decoration::after {
+      content: '';
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: spinDecoration 20s infinite linear;
+    }
+    
+    .decoration::before {
+      top: -60px;
+      left: -60px;
+    }
+    
+    .decoration::after {
+      bottom: -60px;
+      right: -60px;
+      animation-direction: reverse;
+      width: 80px;
+      height: 80px;
+    }
+    
+    @keyframes spinDecoration {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Firefly effects */
+    .firefly {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.5),
+                  0 0 10px 2px rgba(255, 215, 0, 0.3);
+      animation: firefly 6s linear infinite;
+      opacity: 0;
+    }
+    
+    @keyframes firefly {
+      0%, 100% { opacity: 0; }
+      10%, 90% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Background particles -->
+  <div class="particles" id="particles"></div>
+  
+  <!-- Ambient light effect -->
+  <div class="ambient-light"></div>
+
+  <div class="title" data-text="You Are the Best Person">
+    You Are the <span class="heartbeat">💗</span> Best Person
+  </div>
+
+  <div class="cube-container">
+    <div class="decoration"></div>
+    <div class="glow-ring"></div>
+    <div class="cube" id="cube">
+      <div class="outer-cube">
+        <div class="face outer-top">
+          <img src="images/r1.jpg" alt="Bestie image 1" />
+        </div>
+        <div class="face outer-bottom">
+          <img src="images/r2.jpg" alt="Bestie image 2" />
+        </div>
+        <div class="face outer-front">
+          <img src="images/r3.jpg" alt="Bestie image 3" />
+        </div>
+        <div class="face outer-back">
+          <img src="images/r4.jpg" alt="Bestie image 4" />
+        </div>
+        <div class="face outer-left">
+          <img src="images/r5.jpg" alt="Bestie image 5" />
+        </div>
+        <div class="face outer-right">
+          <img src="images/r6.jpg" alt="Bestie image 6" />
+        </div>
+      </div>
+      <!-- Inner cube -->
+      <div class="inner-cube">
+        <div class="face inner-top">
+          <img src="images/r1.jpg" alt="Bestie inner 1" />
+        </div>
+        <div class="face inner-bottom">
+          <img src="images/r2.jpg" alt="Bestie inner 2" />
+        </div>
+        <div class="face inner-front">
+          <img src="images/r3.jpg" alt="Bestie inner 3" />
+        </div>
+        <div class="face inner-back">
+          <img src="images/r4.jpg" alt="Bestie inner 4" />
+        </div>
+        <div class="face inner-left">
+          <img src="images/r5.jpg" alt="Bestie inner 5" />
+        </div>
+        <div class="face inner-right">
+          <img src="images/r6.jpg" alt="Bestie inner 6" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="message">
+    <div class="tip" id="tip">
+      Hover over the cube to see the magic ✨
+    </div>
+  </div>
+
+  <div id="copy">
+    <p>From <a href="https://www.instagram.com/theayushdube" target="_blank">Ayush Dubey</a> with love</p>
+  </div>
+
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  const cube = document.getElementById('cube');
+  const particles = document.getElementById('particles');
+  
+  // Create background particles
+  for (let i = 0; i < 50; i++) {
+    createParticle();
+  }
+  
+  function createParticle() {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    // Random position, size and delay
+    const posX = Math.random() * 100;
+    const size = 2 + Math.random() * 4;
+    const delay = Math.random() * 15;
+    const duration = 10 + Math.random() * 20;
+    
+    particle.style.left = posX + 'vw';
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.animationDelay = delay + 's';
+    particle.style.animationDuration = duration + 's';
+    
+    // Random appearance
+    const opacity = 0.3 + Math.random() * 0.5;
+    particle.style.opacity = opacity;
+    
+    if (Math.random() > 0.7) {
+      particle.style.borderRadius = '0'; // Some square particles
+      particle.style.transform = `rotate(${Math.random() * 360}deg)`;
+    }
+    
+    particles.appendChild(particle);
+    
+    // Remove and recreate particle after animation
+    setTimeout(() => {
+      if (particle.parentNode) {
+        particles.removeChild(particle);
+        createParticle();
+      }
+    }, duration * 1000);
+  }
+  
+  // Create fireflies effect
+  for (let i = 0; i < 20; i++) {
+    createFirefly();
+  }
+  
+  function createFirefly() {
+    const firefly = document.createElement('div');
+    firefly.className = 'firefly';
+    
+    // Random position
+    const posX = Math.random() * window.innerWidth;
+    const posY = Math.random() * window.innerHeight;
+    
+    firefly.style.left = posX + 'px';
+    firefly.style.top = posY + 'px';
+    
+    // Random timing
+    const delay = Math.random() * 5;
+    const duration = 4 + Math.random() * 4;
+    
+    firefly.style.animationDelay = delay + 's';
+    firefly.style.animationDuration = duration + 's';
+    
+    document.body.appendChild(firefly);
+    
+    // Move firefly randomly
+    setTimeout(() => {
+      moveFirefly(firefly);
+    }, delay * 1000);
+  }
+  
+  function moveFirefly(firefly) {
+    const newX = Math.random() * window.innerWidth;
+    const newY = Math.random() * window.innerHeight;
+    const duration = 3 + Math.random() * 4;
+    
+    firefly.style.transition = `left ${duration}s ease-in-out, top ${duration}s ease-in-out`;
+    firefly.style.left = newX + 'px';
+    firefly.style.top = newY + 'px';
+    
+    setTimeout(() => {
+      if (firefly.parentNode) {
+        moveFirefly(firefly);
+      }
+    }, duration * 1000);
+  }
+  
+  // Track if the cube is being hovered
+  let isHovered = false;
+  let cubeAnimation = null;
+  let autoRotationPaused = false;
+  
+  // Get current rotation of cube
+  function getRotationValues(element) {
+    const style = window.getComputedStyle(element);
+    const matrix = new DOMMatrix(style.transform);
+    
+    // Convert matrix to angles (approximate extraction)
+    // This is a simplified approach and may not be perfect
+    const angleY = Math.atan2(matrix.m13, matrix.m33) * (180 / Math.PI);
+    const angleX = Math.atan2(-matrix.m23, Math.sqrt(matrix.m21 * matrix.m21 + matrix.m22 * matrix.m22)) * (180 / Math.PI);
+    
+    return { x: angleX, y: angleY };
+  }
+  
+  // Enhanced cube interaction - improved for smooth rotation
+  cube.addEventListener('mouseenter', function() {
+    isHovered = true;
+    
+    // Pause the auto-rotation animation without removing it
+    if (!autoRotationPaused) {
+      cube.style.animationPlayState = 'paused';
+      autoRotationPaused = true;
+    }
+    
+    // Get current rotation values to start from current position
+    const currentRotation = getRotationValues(cube);
+    let startX = -15; // Default if we can't determine
+    let startY = currentRotation.y;
+    
+    // Create a keyframe animation that completes full 360 rotations
+    // This ensures smooth transitions between faces
+    cubeAnimation = cube.animate([
+      { transform: `rotateX(${startX}deg) rotateY(${startY}deg)` },
+      { transform: `rotateX(${startX + 10}deg) rotateY(${startY + 90}deg)` },
+      { transform: `rotateX(${startX - 10}deg) rotateY(${startY + 180}deg)` },
+      { transform: `rotateX(${startX + 10}deg) rotateY(${startY + 270}deg)` },
+      { transform: `rotateX(${startX}deg) rotateY(${startY + 360}deg)` }
+    ], {
+      duration: 15000,
+      iterations: Infinity,
+      easing: 'ease-in-out'
+    });
+    
+    // Increase the glow effect
+    document.querySelector('.glow-ring').style.animation = 'pulseRing 2s infinite';
+    document.querySelector('.glow-ring').style.opacity = '0.9';
+    document.querySelector('.glow-ring').style.width = '380px';
+    document.querySelector('.glow-ring').style.height = '380px';
+    
+    // Create sparkles for elegant effect
+    createRefinedSparkles();
+    
+    // Start creating floating elements at a faster rate while hovered
+    if (!window.floatingElementInterval) {
+      window.floatingElementInterval = setInterval(createFloatingElement, 500);
+    }
+  });
+  
+  cube.addEventListener('mouseleave', function() {
+    isHovered = false;
+    
+    // Cancel the hover animation
+    if (cubeAnimation) {
+      // Store the current rotation before cancelling
+      const currentRotation = getRotationValues(cube);
+      cubeAnimation.cancel();
+      cubeAnimation = null;
+      
+      // Apply the current rotation as a inline style to prevent jumping
+      cube.style.transform = `rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`;
+      
+      // Force a reflow before changing the animation
+      cube.offsetHeight;
+      
+      // Resume auto-rotation smoothly from current position
+      cube.style.animation = 'none'; // Clear any existing animation
+      cube.offsetHeight; // Force reflow
+      
+      // Create a custom keyframe to transition back to auto-rotation
+      const autoRotateKeyframes = `
+        @keyframes resumeAutoRotate {
+          from { transform: rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg); }
+          to { transform: rotateX(-15deg) rotateY(${currentRotation.y + 5}deg); }
+        }
+      `;
+      
+      // Add the keyframes to the document
+      const styleSheet = document.createElement('style');
+      styleSheet.textContent = autoRotateKeyframes;
+      document.head.appendChild(styleSheet);
+      
+      // Apply the transition animation
+      cube.style.animation = 'resumeAutoRotate 0.5s forwards';
+      
+      // After the transition, resume the normal auto-rotation
+      setTimeout(() => {
+        cube.style.animation = 'autoRotate 18s infinite linear';
+        autoRotationPaused = false;
+        
+        // Clean up the temporary style element
+        document.head.removeChild(styleSheet);
+      }, 500);
+    }
+    
+    // Reset glow effect gradually
+    const glow = document.querySelector('.glow-ring');
+    glow.style.transition = 'all 1s ease';
+    glow.style.animation = 'pulseRing 4s infinite';
+    glow.style.opacity = '0.6';
+    glow.style.width = '350px';
+    glow.style.height = '350px';
+    
+    // Clear the interval for floating elements
+    if (window.floatingElementInterval) {
+      clearInterval(window.floatingElementInterval);
+      window.floatingElementInterval = null;
+    }
+  });
+  
+  // Mouse movement interaction for a more immersive experience
+  document.addEventListener('mousemove', function(e) {
+    if (isHovered) {
+      // If already hovered, create sparkles occasionally
+      if (Math.random() > 0.85) {
+        createSparkleOnMove(e);
+      }
+      
+      // Create rainbow trail with lower frequency during hover
+      if (Math.random() > 0.9) {
+        createRainbowTrail(e);
+      }
+    } else {
+      // Only apply tilt when not being hovered and not during transitions
+      if (!cube.matches(':hover') && !cubeAnimation && !autoRotationPaused) {
+        // Calculate position relative to center for subtle tilt when not hovered
+        const windowCenterX = window.innerWidth / 2;
+        const windowCenterY = window.innerHeight / 2;
+        
+        // Normalized coordinates (-1 to 1)
+        const normalizedX = (e.clientX - windowCenterX) / windowCenterX;
+        const normalizedY = (e.clientY - windowCenterY) / windowCenterY;
+        
+        // Apply very subtle movement - professional and not distracting
+        const tiltX = normalizedY * -8; // Subtle tilt
+        const tiltY = normalizedX * 8;  // Subtle tilt
+        
+        // Apply with smooth transition
+        cube.style.transition = 'transform 0.3s ease-out';
+        cube.style.transform = `rotateX(${-15 + tiltX}deg) rotateY(${tiltY}deg)`;
+      }
+    }
+  });
+  
+  // Create sparkle effect on mouse move when cube is hovered
+  function createSparkleOnMove(e) {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+    sparkle.style.left = (e.clientX - 2) + 'px';
+    sparkle.style.top = (e.clientY - 2) + 'px';
+    
+    // Random sparkle color
+    const colors = ['white', '#FFD700', '#FF69B4'];
+    sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    
+    document.body.appendChild(sparkle);
+    
+    // Remove sparkle after animation completes
+    setTimeout(() => {
+      if (sparkle.parentNode) {
+        document.body.removeChild(sparkle);
+      }
+    }, 1500);
+  }
+  
+  // Create more elegant and refined sparkles around the cube
+  function createRefinedSparkles() {
+    if (!isHovered) return;
+    
+    const container = document.querySelector('.cube-container');
+    const rect = container.getBoundingClientRect();
+    
+    // Create a sparkle at a random position around the cube
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+    
+    // Position randomly around the cube
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 100 + Math.random() * 50;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const x = centerX + Math.cos(angle) * radius;
+    const y = centerY + Math.sin(angle) * radius;
+    
+    sparkle.style.left = x + 'px';
+    sparkle.style.top = y + 'px';
+    
+    // Varied sizes for more natural effect
+    const size = 3 + Math.random() * 3;
+    sparkle.style.width = size + 'px';
+    sparkle.style.height = size + 'px';
+    
+    // Random sparkle color
+    const colors = ['white', '#FFD700', '#FF69B4', '#87CEFA'];
+    sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    sparkle.style.boxShadow = `0 0 ${5 + Math.random() * 5}px ${sparkle.style.backgroundColor}`;
+    
+    document.body.appendChild(sparkle);
+    
+    // Remove sparkle after animation completes
+    setTimeout(() => {
+      if (sparkle.parentNode) {
+        document.body.removeChild(sparkle);
+      }
+    }, 1500);
+    
+    // Continue creating sparkles while hovered
+    if (isHovered) {
+      setTimeout(createRefinedSparkles, 100 + Math.random() * 150);
+    }
+  }
+  
+  // Create rainbow trail effect
+  function createRainbowTrail(e) {
+    const trail = document.createElement('div');
+    trail.className = 'rainbow-trail';
+    
+    trail.style.left = (e.clientX - 7) + 'px';
+    trail.style.top = (e.clientY - 7) + 'px';
+    
+    // Random rainbow colors
+    const hue = Math.floor(Math.random() * 360);
+    trail.style.backgroundColor = `hsl(${hue}, 100%, 70%)`;
+    trail.style.boxShadow = `0 0 8px 2px hsla(${hue}, 100%, 70%, 0.8)`;
+    
+    document.body.appendChild(trail);
+    
+    // Remove trail after animation completes
+    setTimeout(() => {
+      if (trail.parentNode) {
+        document.body.removeChild(trail);
+      }
+    }, 2000);
+  }
+  
+  // Create floating hearts and stars
+  function createFloatingElement() {
+    if (!document.hidden) {
+      const element = document.createElement('div');
+      element.className = 'floating-element';
+      
+      // Random position near the cube
+      const container = document.querySelector('.cube-container');
+      const rect = container.getBoundingClientRect();
+      
+      const x = rect.left + Math.random() * rect.width;
+      const y = rect.top + rect.height;
+      
+      element.style.left = x + 'px';
+      element.style.top = y + 'px';
+      
+      // Random size
+      const size = 10 + Math.random() * 15;
+      element.style.fontSize = size + 'px';
+      
+      // Random element type
+      const symbols = ['❤️', '✨', '💕', '💫', '🌟', '💖', '💗'];
+      element.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+      
+      // Random animation speed
+      const duration = 3 + Math.random() * 4;
+      element.style.animationDuration = duration + 's';
+      
+      document.body.appendChild(element);
+      
+      // Remove element after animation
+      setTimeout(() => {
+        if (element.parentNode) {
+          document.body.removeChild(element);
+        }
+      }, duration * 1000);
+    }
+  }
+  
+  // Occasionally drop confetti particles
+  function dropConfetti() {
+    if (document.hidden) return;
+    
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        
+        // Random position at top of the window
+        const x = Math.random() * window.innerWidth;
+        confetti.style.left = x + 'px';
+        confetti.style.top = '-20px';
+        
+        // Random confetti shape and color
+        const colors = ['#FF69B4', '#87CEFA', '#FFD700', '#FF6347', '#9370DB', '#3CB371'];
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Random size and shape
+        const width = 5 + Math.random() * 10;
+        const height = width * (1 + Math.random());
+        confetti.style.width = width + 'px';
+        confetti.style.height = height + 'px';
+        
+        // Some rectangular, some rounded
+        if (Math.random() > 0.5) {
+          confetti.style.borderRadius = '50%';
+        } else {
+          confetti.style.borderRadius = (Math.random() * 5) + 'px';
+        }
+        
+        // Random rotation and animation duration
+        const rotation = Math.random() * 360;
+        const duration = 4 + Math.random() * 4;
+        
+        confetti.style.transform = `rotate(${rotation}deg)`;
+        confetti.style.animationDuration = duration + 's';
+        
+        document.body.appendChild(confetti);
+        
+        // Random horizontal movement
+        confetti.animate([
+          { transform: `translateX(0) rotate(${rotation}deg)` },
+          { transform: `translateX(${-50 + Math.random() * 100}px) rotate(${rotation + 720}deg)` }
+        ], {
+          duration: duration * 1000,
+          easing: 'ease-in-out',
+          fill: 'forwards'
+        });
+        
+        // Remove confetti after animation
+        setTimeout(() => {
+          if (confetti.parentNode) {
+            document.body.removeChild(confetti);
+          }
+        }, duration * 1000);
+      }, i * 200);
+    }
+    
+    // Schedule next confetti drop
+    setTimeout(dropConfetti, 8000 + Math.random() * 10000);
+  }
+  
+  // Start occasional confetti effect
+  setTimeout(dropConfetti, 3000);
+  
+  // Start occasional floating elements
+  setInterval(createFloatingElement, 2000);
+  
+  // Update tip message after a while
+  setTimeout(() => {
+    const tip = document.getElementById('tip');
+    tip.innerHTML = "You're amazing! Never forget that! 💖";
+    
+    // Then cycle through different messages
+    const messages = [
+      "You're amazing! Never forget that! 💖",
+      "Your friendship means the world to me! ✨",
+      "Keep being the incredible person you are! 🌟",
+      "Thanks for being the best friend ever! 💕",
+      "You brighten every day with your presence! 💫"
+    ];
+    
+    let messageIndex = 1;
+    
+    setInterval(() => {
+      tip.style.animation = 'none';
+      tip.offsetHeight; // Trigger reflow
+      tip.style.animation = 'fadeInOut 5s infinite';
+      tip.innerHTML = messages[messageIndex];
+      messageIndex = (messageIndex + 1) % messages.length;
+    }, 5000);
+  }, 6000);
+});
+  </script>
+</body>
+</html>
